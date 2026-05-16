@@ -1,0 +1,74 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+
+class OsmData {
+  +nodes: Map<Long, OsmNode>
+  +ways: List<OsmWay>
+}
+class OsmNode {
+  +id: Long
+  +lat: Double
+  +lon: Double
+  +tags: Map<String, String>
+}
+class OsmWay {
+  +id: Long
+  +nodeIds: List<Long>
+  +tags: Map<String, String>
+}
+class BoundingBox {
+  +south: Double
+  +west: Double
+  +north: Double
+  +east: Double
+}
+enum CriterionId {
+  SAFETY
+  CONTINUITY
+  INTERSECTIONS
+  HIGH_SPEED
+  SURFACE
+}
+class CriterionScore {
+  +value: Double
+  +applicable: Boolean
+  +detail: String
+}
+class QualityScore {
+  +total: Double
+  +summary: String
+}
+class AreaEvaluation {
+  +id: String
+  +name: String
+  +timestamp: Long
+}
+class BikeInfrastructureScorer {
+  +score(data: OsmData): QualityScore
+}
+class AnalyzeAreaUseCase {
+  +invoke(bbox: BoundingBox): QualityScore
+}
+interface OsmRepository {
+  +loadOsmData(bbox): OsmData
+}
+interface HistoryRepository {
+  +save(e: AreaEvaluation)
+  +observeHistory(): Flow
+}
+
+OsmData *-- "0..*" OsmNode
+OsmData *-- "0..*" OsmWay
+QualityScore *-- "5" CriterionScore
+CriterionScore --> CriterionId
+AreaEvaluation *-- QualityScore
+AreaEvaluation *-- BoundingBox
+AnalyzeAreaUseCase --> OsmRepository
+AnalyzeAreaUseCase --> BikeInfrastructureScorer
+BikeInfrastructureScorer ..> OsmData
+BikeInfrastructureScorer ..> QualityScore
+@enduml

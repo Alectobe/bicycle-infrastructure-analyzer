@@ -1,0 +1,32 @@
+@startuml
+skinparam defaultFontName Arial
+skinparam shadowing false
+
+actor "Пользователь" as U
+participant "MapScreen" as MS
+participant "MapViewModel" as VM
+participant "AnalyzeAreaUseCase" as UC
+participant "OsmRepository" as REPO
+participant "OverpassApi" as API
+participant "BikeInfrastructureScorer" as SC
+participant "HistoryRepository" as HIST
+
+U -> MS : нажимает «Анализировать»
+MS -> VM : analyze(bbox)
+activate VM
+VM -> UC : invoke(bbox)
+activate UC
+UC -> REPO : loadOsmData(bbox)
+activate REPO
+REPO -> API : fetch(bbox)
+API --> REPO : JSON-ответ Overpass
+REPO --> UC : OsmData
+deactivate REPO
+UC -> SC : score(osmData)
+SC --> UC : QualityScore
+UC --> VM : QualityScore
+deactivate UC
+VM -> HIST : save(AreaEvaluation)
+VM --> MS : переход на экран результата
+deactivate VM
+@enduml

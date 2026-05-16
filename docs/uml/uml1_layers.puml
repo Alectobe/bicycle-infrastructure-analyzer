@@ -1,0 +1,37 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+package "Слой представления (presentation)" {
+  [Экраны Compose:\nMapScreen, ResultScreen, DetailScreen] as UIScreens
+  [MapViewModel, EvaluationViewModel] as UIVm
+}
+
+package "Слой предметной области (domain)" {
+  [Модель данных:\nOsmData, QualityScore, AreaEvaluation] as DModel
+  [AnalyzeAreaUseCase] as DUseCase
+  [BikeInfrastructureScorer\n(алгоритм оценки)] as DScorer
+  [Интерфейсы репозиториев:\nOsmRepository, HistoryRepository] as DRepo
+}
+
+package "Слой данных (data)" {
+  [OverpassApi] as DataApi
+  [OsmRepositoryImpl,\nHistoryRepositoryImpl] as DataRepo
+  [OsmCache] as DataCache
+}
+
+cloud "Overpass API (OpenStreetMap)" as OSM
+
+UIVm --> DUseCase
+UIVm --> DRepo
+UIScreens --> DModel
+DUseCase --> DRepo
+DUseCase --> DScorer
+DataRepo ..|> DRepo
+DataRepo --> DataApi
+DataRepo --> DataCache
+DataApi --> OSM
+@enduml
