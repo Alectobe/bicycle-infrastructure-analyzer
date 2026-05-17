@@ -32,6 +32,7 @@ class OverpassApi(
     suspend fun fetch(bbox: BoundingBox): String = withContext(Dispatchers.IO) {
         val request = Request.Builder()
             .url(endpoint)
+            .header("User-Agent", USER_AGENT)
             .post(FormBody.Builder().add("data", buildQuery(bbox)).build())
             .build()
         try {
@@ -49,6 +50,10 @@ class OverpassApi(
 
     private companion object {
         const val DEFAULT_ENDPOINT = "https://overpass-api.de/api/interpreter"
+
+        // Overpass API отклоняет запросы с обобщённым User-Agent (HTTP 406),
+        // поэтому указывается содержательный идентификатор приложения.
+        const val USER_AGENT = "BicycleInfrastructureAnalyzer/1.0 (Android course project)"
 
         fun defaultClient(): OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
