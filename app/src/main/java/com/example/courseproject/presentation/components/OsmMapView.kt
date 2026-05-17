@@ -14,6 +14,8 @@ import com.example.courseproject.domain.model.BoundingBox
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import kotlin.math.max
+import kotlin.math.min
 
 /** Стартовое положение карты — центр Москвы. */
 private val DEFAULT_CENTER = GeoPoint(55.751244, 37.618423)
@@ -61,13 +63,18 @@ fun OsmMapView(
     AndroidView(factory = { mapView }, modifier = modifier)
 }
 
-/** Текущая видимая область карты в виде доменного [BoundingBox]. */
-fun MapView.visibleBoundingBox(): BoundingBox {
-    val box = boundingBox
+/**
+ * Географические границы прямоугольной рамки выбора — области карты,
+ * отстоящей от каждого края на [insetPx] пикселей.
+ */
+fun MapView.selectedBoundingBox(insetPx: Int): BoundingBox {
+    val mapProjection = projection
+    val topLeft = mapProjection.fromPixels(insetPx, insetPx)
+    val bottomRight = mapProjection.fromPixels(width - insetPx, height - insetPx)
     return BoundingBox(
-        south = box.latSouth,
-        west = box.lonWest,
-        north = box.latNorth,
-        east = box.lonEast,
+        south = min(topLeft.latitude, bottomRight.latitude),
+        west = min(topLeft.longitude, bottomRight.longitude),
+        north = max(topLeft.latitude, bottomRight.latitude),
+        east = max(topLeft.longitude, bottomRight.longitude),
     )
 }

@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,8 +42,11 @@ import com.example.courseproject.domain.model.AreaEvaluation
 import com.example.courseproject.domain.model.BoundingBox
 import com.example.courseproject.presentation.components.EvaluationRow
 import com.example.courseproject.presentation.components.OsmMapView
-import com.example.courseproject.presentation.components.visibleBoundingBox
+import com.example.courseproject.presentation.components.selectedBoundingBox
 import org.osmdroid.views.MapView
+
+/** Отступ рамки выбора области анализа от краёв карты. */
+private val FrameInset = 12.dp
 
 /** Маршрут главного экрана: связывает [MapViewModel] с UI. */
 @Composable
@@ -80,6 +84,7 @@ fun MapScreen(
     onDismissError: () -> Unit,
 ) {
     var mapView by remember { mutableStateOf<MapView?>(null) }
+    val frameInsetPx = with(LocalDensity.current) { FrameInset.roundToPx() }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Оценка велоинфраструктуры") }) },
@@ -102,7 +107,7 @@ fun MapScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(12.dp)
+                            .padding(FrameInset)
                             .border(
                                 width = 2.dp,
                                 color = MaterialTheme.colorScheme.primary,
@@ -118,7 +123,7 @@ fun MapScreen(
                         tonalElevation = 3.dp,
                     ) {
                         Text(
-                            text = "Наведите карту на район — анализируется видимая область внутри рамки",
+                            text = "Наведите карту так, чтобы нужный район попал в рамку",
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         )
@@ -127,7 +132,7 @@ fun MapScreen(
                 MapBottomPanel(
                     history = history,
                     analyzeEnabled = !uiState.isLoading && mapView != null,
-                    onAnalyze = { mapView?.let { onAnalyze(it.visibleBoundingBox()) } },
+                    onAnalyze = { mapView?.let { onAnalyze(it.selectedBoundingBox(frameInsetPx)) } },
                     onOpenEvaluation = onOpenEvaluation,
                 )
             }
