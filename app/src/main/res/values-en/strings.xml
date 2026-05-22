@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application -->
+    <string name="app_name">Bicycle Infrastructure Analyzer</string>
+
+    <!-- Screen titles -->
+    <string name="screen_map_title">Bicycle infrastructure quality</string>
+    <string name="screen_result_title">Analysis result</string>
+    <string name="screen_detail_title">Criteria details</string>
+
+    <!-- Actions -->
+    <string name="action_analyze">Analyze visible area</string>
+    <string name="action_back">Back</string>
+    <string name="action_open_details">Show criteria details</string>
+    <string name="action_dismiss">OK</string>
+
+    <!-- Map screen -->
+    <string name="map_frame_hint">Pan the map so the area you want fits inside the frame</string>
+    <string name="map_loading_message">Loading OpenStreetMap data…</string>
+    <string name="map_error_dialog_title">Analysis failed</string>
+    <string name="map_history_header">Analysis history</string>
+    <string name="map_history_empty">No saved analyses yet. Pick an area and run the analysis.</string>
+
+    <!-- Area name -->
+    <string name="area_name_format">Area %1$d</string>
+    <string name="quality_label_format">Quality: %1$s</string>
+
+    <!-- Result screen -->
+    <string name="result_not_found">Analysis record not found.</string>
+    <string name="result_band_header_format">Bicycle infrastructure quality — %1$s</string>
+    <string name="result_summary_header">Score explanation</string>
+    <string name="result_similar_header">Similar areas</string>
+    <string name="result_similar_empty">Evaluate other areas to compare them.</string>
+
+    <!-- Detail screen -->
+    <string name="detail_score_total_format">Overall score Q = %1$s</string>
+    <string name="detail_weight_format">Criterion weight — %1$s</string>
+    <string name="detail_value_not_applicable">—</string>
+    <string name="detail_excluded_note">Criterion excluded from Q due to insufficient data.</string>
+
+    <!-- Criterion titles -->
+    <string name="criterion_safety_title">Safety</string>
+    <string name="criterion_continuity_title">Network continuity</string>
+    <string name="criterion_intersections_title">Intersection organization</string>
+    <string name="criterion_high_speed_title">Infrastructure on high-speed roads</string>
+    <string name="criterion_surface_title">Surface quality</string>
+
+    <!-- Score bands -->
+    <string name="band_very_low">very low</string>
+    <string name="band_low">low</string>
+    <string name="band_medium">medium</string>
+    <string name="band_good">good</string>
+    <string name="band_high">high</string>
+
+    <!-- Summary -->
+    <string name="summary_band_format">Bicycle infrastructure quality — %1$s (Q = %2$s).</string>
+    <string name="summary_equal_criteria">The evaluated criteria are roughly equivalent.</string>
+    <string name="summary_best_worst">The highest contributor is \"%1$s\" (%2$s); the lowest — \"%3$s\" (%4$s).</string>
+    <string name="summary_no_data">The overall score cannot be calculated: not enough data.</string>
+
+    <!-- Criterion details -->
+    <string name="detail_safety_format">The cycling-friendly network (cycleways, bike lanes, calm streets) covers %1$s of the length (%2$s out of %3$s).</string>
+    <string name="detail_continuity_single_format">The cycling-friendly network is fully connected — one continuous segment (%1$s).</string>
+    <string name="detail_continuity_multi_format">The largest connected segment of the cycling-friendly network covers %1$s of its length (%2$s out of %3$s). Disconnected segments: %4$d.</string>
+    <string name="detail_intersections_format">%1$d out of %2$d intersections in the area have organized crossings (signals or markings).</string>
+    <string name="detail_high_speed_format">Bicycle infrastructure covers %1$s of high-speed roads (%2$s out of %3$s).</string>
+    <string name="detail_surface_format">Acceptable surface at %1$d out of %2$d bicycle infrastructure objects with a surface tag.</string>
+
+    <!-- Not applicable reasons -->
+    <string name="not_applicable_no_low_stress">No cycling-friendly network in the area — continuity is not determined.</string>
+    <string name="not_applicable_no_crossings">No intersections or crossings are mapped in the area.</string>
+    <string name="not_applicable_no_fast_roads">No roads with a speed limit above 40 km/h in the area.</string>
+    <string name="not_applicable_no_surface_data">No bicycle infrastructure object has a surface tag.</string>
+    <string name="not_applicable_insufficient_data">Not enough data to evaluate.</string>
+
+    <!-- Data warnings -->
+    <string name="warning_few_roads_format">Few roads in the selected area (%1$d); the result may not be representative.</string>
+    <string name="warning_many_inapplicable">Several criteria lack OSM data and were excluded from Q.</string>
+    <string name="warning_no_network">Pick an area with a road network or change the map zoom.</string>
+    <string name="summary_no_network">No roads found in the selected area for bicycle infrastructure analysis.</string>
+
+    <!-- Errors -->
+    <string name="error_network">Could not connect to the OpenStreetMap server. Check your internet connection.</string>
+    <string name="error_http_format">The OpenStreetMap server returned an error (code %1$d).</string>
+    <string name="error_empty_response">The OpenStreetMap server returned an empty response.</string>
+    <string name="error_parse">Could not parse the Overpass API response.</string>
+    <string name="error_unknown">Could not analyze the area.</string>
+
+    <!-- Numeric format helpers (locale-aware) -->
+    <string name="format_km">%1$.1f km</string>
+    <string name="format_percent">%1$d%%</string>
+    <string name="format_score">%1$.2f</string>
+</resources>

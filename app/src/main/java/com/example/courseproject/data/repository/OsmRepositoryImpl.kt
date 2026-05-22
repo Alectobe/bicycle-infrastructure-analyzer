@@ -3,8 +3,9 @@ package com.example.courseproject.data.repository
 import com.example.courseproject.data.cache.OsmCache
 import com.example.courseproject.data.mapper.toOsmData
 import com.example.courseproject.data.remote.OverpassApi
-import com.example.courseproject.data.remote.OverpassException
 import com.example.courseproject.data.remote.dto.OverpassResponseDto
+import com.example.courseproject.domain.model.AnalysisError
+import com.example.courseproject.domain.model.AnalysisException
 import com.example.courseproject.domain.model.BoundingBox
 import com.example.courseproject.domain.model.OsmData
 import com.example.courseproject.domain.repository.OsmRepository
@@ -14,6 +15,9 @@ import com.google.gson.JsonSyntaxException
 /**
  * Реализация [OsmRepository]: данные берутся из локального кэша, а при его
  * отсутствии (или при forceRefresh) запрашиваются у Overpass API и кэшируются.
+ *
+ * Ошибки парсинга и сетевые сбои оборачиваются в [AnalysisException]
+ * с типизированной причиной [AnalysisError].
  */
 class OsmRepositoryImpl(
     private val api: OverpassApi,
@@ -27,7 +31,7 @@ class OsmRepositoryImpl(
         val dto = try {
             gson.fromJson(rawJson, OverpassResponseDto::class.java)
         } catch (e: JsonSyntaxException) {
-            throw OverpassException("Не удалось разобрать ответ Overpass API", e)
+            throw AnalysisException(AnalysisError.ParseError, e)
         }
         return dto?.toOsmData() ?: OsmData.EMPTY
     }

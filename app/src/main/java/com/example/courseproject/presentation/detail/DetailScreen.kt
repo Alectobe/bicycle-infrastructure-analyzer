@@ -32,16 +32,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.courseproject.R
 import com.example.courseproject.di.AppContainer
 import com.example.courseproject.domain.model.AreaEvaluation
 import com.example.courseproject.domain.model.CriterionScore
-import com.example.courseproject.presentation.components.formatScore
 import com.example.courseproject.presentation.components.scoreColor
 import com.example.courseproject.presentation.evaluation.EvaluationViewModel
+import com.example.courseproject.presentation.format.formatScore
+import com.example.courseproject.presentation.format.localizedCriterionDetail
+import com.example.courseproject.presentation.format.localizedCriterionTitle
 
 /** Маршрут экрана детализации: связывает [EvaluationViewModel] с UI. */
 @Composable
@@ -67,10 +71,13 @@ fun DetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Детализация по критериям") },
+                title = { Text(stringResource(R.string.screen_detail_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.action_back),
+                        )
                     }
                 },
             )
@@ -83,10 +90,15 @@ fun DetailScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("Запись анализа не найдена.")
+                Text(stringResource(R.string.result_not_found))
             }
             return@Scaffold
         }
+        val name = stringResource(R.string.area_name_format, evaluation.index)
+        val totalLine = stringResource(
+            R.string.detail_score_total_format,
+            formatScore(evaluation.score.total),
+        )
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -96,9 +108,9 @@ fun DetailScreen(
         ) {
             item {
                 Column {
-                    Text(evaluation.name, style = MaterialTheme.typography.titleMedium)
+                    Text(text = name, style = MaterialTheme.typography.titleMedium)
                     Text(
-                        text = "Итоговая оценка Q = ${formatScore(evaluation.score.total)}",
+                        text = totalLine,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -113,6 +125,17 @@ fun DetailScreen(
 
 @Composable
 private fun CriterionCard(score: CriterionScore) {
+    val title = localizedCriterionTitle(score.criterion)
+    val weightLine = stringResource(
+        R.string.detail_weight_format,
+        formatScore(score.criterion.weight),
+    )
+    val valueText = if (score.applicable) {
+        formatScore(score.value)
+    } else {
+        stringResource(R.string.detail_value_not_applicable)
+    }
+    val detailText = localizedCriterionDetail(score)
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -132,15 +155,15 @@ private fun CriterionCard(score: CriterionScore) {
                 }
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(score.criterion.title, style = MaterialTheme.typography.titleSmall)
+                    Text(text = title, style = MaterialTheme.typography.titleSmall)
                     Text(
-                        text = "Вес критерия — ${formatScore(score.criterion.weight)}",
+                        text = weightLine,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 Text(
-                    text = if (score.applicable) formatScore(score.value) else "—",
+                    text = valueText,
                     style = MaterialTheme.typography.titleMedium,
                     color = if (score.applicable) {
                         scoreColor(score.value)
@@ -158,11 +181,11 @@ private fun CriterionCard(score: CriterionScore) {
                 )
                 Spacer(Modifier.height(10.dp))
             }
-            Text(score.detail, style = MaterialTheme.typography.bodyMedium)
+            Text(text = detailText, style = MaterialTheme.typography.bodyMedium)
             if (!score.applicable) {
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "Критерий исключён из расчёта Q из-за недостатка данных.",
+                    text = stringResource(R.string.detail_excluded_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

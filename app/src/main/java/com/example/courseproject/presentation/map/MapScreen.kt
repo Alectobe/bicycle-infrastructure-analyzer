@@ -34,15 +34,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.courseproject.R
 import com.example.courseproject.di.AppContainer
 import com.example.courseproject.domain.model.AreaEvaluation
 import com.example.courseproject.domain.model.BoundingBox
 import com.example.courseproject.presentation.components.EvaluationRow
 import com.example.courseproject.presentation.components.OsmMapView
 import com.example.courseproject.presentation.components.selectedBoundingBox
+import com.example.courseproject.presentation.format.localizedAnalysisError
 import org.osmdroid.views.MapView
 
 /** Отступ рамки выбора области анализа от краёв карты. */
@@ -87,7 +90,9 @@ fun MapScreen(
     val frameInsetPx = with(LocalDensity.current) { FrameInset.roundToPx() }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Оценка велоинфраструктуры") }) },
+        topBar = {
+            TopAppBar(title = { Text(stringResource(R.string.screen_map_title)) })
+        },
     ) { padding ->
         Box(
             modifier = Modifier
@@ -123,7 +128,7 @@ fun MapScreen(
                         tonalElevation = 3.dp,
                     ) {
                         Text(
-                            text = "Наведите карту так, чтобы нужный район попал в рамку",
+                            text = stringResource(R.string.map_frame_hint),
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         )
@@ -143,14 +148,16 @@ fun MapScreen(
         }
     }
 
-    uiState.error?.let { message ->
+    uiState.error?.let { error ->
         AlertDialog(
             onDismissRequest = onDismissError,
             confirmButton = {
-                TextButton(onClick = onDismissError) { Text("Понятно") }
+                TextButton(onClick = onDismissError) {
+                    Text(stringResource(R.string.action_dismiss))
+                }
             },
-            title = { Text("Не удалось выполнить анализ") },
-            text = { Text(message) },
+            title = { Text(stringResource(R.string.map_error_dialog_title)) },
+            text = { Text(localizedAnalysisError(error)) },
         )
     }
 }
@@ -173,17 +180,17 @@ private fun MapBottomPanel(
                 enabled = analyzeEnabled,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Анализировать видимую область")
+                Text(stringResource(R.string.action_analyze))
             }
             Spacer(Modifier.height(12.dp))
             Text(
-                text = "История расчётов",
+                text = stringResource(R.string.map_history_header),
                 style = MaterialTheme.typography.titleSmall,
             )
             Spacer(Modifier.height(8.dp))
             if (history.isEmpty()) {
                 Text(
-                    text = "Пока нет сохранённых оценок. Выберите район и запустите анализ.",
+                    text = stringResource(R.string.map_history_empty),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -219,7 +226,7 @@ private fun LoadingOverlay() {
             ) {
                 CircularProgressIndicator()
                 Spacer(Modifier.height(12.dp))
-                Text("Загрузка данных OpenStreetMap…")
+                Text(stringResource(R.string.map_loading_message))
             }
         }
     }

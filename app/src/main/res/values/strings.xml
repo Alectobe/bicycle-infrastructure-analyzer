@@ -1,3 +1,94 @@
-<resources>
-    <string name="app_name">Course Project</string>
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="ru">
+
+    <!-- Application -->
+    <string name="app_name">Анализатор велоинфраструктуры</string>
+
+    <!-- Screen titles -->
+    <string name="screen_map_title">Оценка велоинфраструктуры</string>
+    <string name="screen_result_title">Результат анализа</string>
+    <string name="screen_detail_title">Детализация по критериям</string>
+
+    <!-- Actions -->
+    <string name="action_analyze">Анализировать видимую область</string>
+    <string name="action_back">Назад</string>
+    <string name="action_open_details">Подробнее по критериям</string>
+    <string name="action_dismiss">Понятно</string>
+
+    <!-- Map screen -->
+    <string name="map_frame_hint">Наведите карту так, чтобы нужный район попал в рамку</string>
+    <string name="map_loading_message">Загрузка данных OpenStreetMap…</string>
+    <string name="map_error_dialog_title">Не удалось выполнить анализ</string>
+    <string name="map_history_header">История расчётов</string>
+    <string name="map_history_empty">Пока нет сохранённых оценок. Выберите район и запустите анализ.</string>
+
+    <!-- Area name -->
+    <string name="area_name_format">Область %1$d</string>
+    <string name="quality_label_format">Качество: %1$s</string>
+
+    <!-- Result screen -->
+    <string name="result_not_found">Запись анализа не найдена.</string>
+    <string name="result_band_header_format">Качество велоинфраструктуры — %1$s</string>
+    <string name="result_summary_header">Пояснение к оценке</string>
+    <string name="result_similar_header">Похожие районы</string>
+    <string name="result_similar_empty">Оцените другие районы, чтобы сравнить их между собой.</string>
+
+    <!-- Detail screen -->
+    <string name="detail_score_total_format">Итоговая оценка Q = %1$s</string>
+    <string name="detail_weight_format">Вес критерия — %1$s</string>
+    <string name="detail_value_not_applicable">—</string>
+    <string name="detail_excluded_note">Критерий исключён из расчёта Q из-за недостатка данных.</string>
+
+    <!-- Criterion titles -->
+    <string name="criterion_safety_title">Безопасность</string>
+    <string name="criterion_continuity_title">Непрерывность сети</string>
+    <string name="criterion_intersections_title">Организация перекрёстков</string>
+    <string name="criterion_high_speed_title">Инфраструктура на скоростных дорогах</string>
+    <string name="criterion_surface_title">Качество покрытия</string>
+
+    <!-- Score bands -->
+    <string name="band_very_low">очень низкое</string>
+    <string name="band_low">низкое</string>
+    <string name="band_medium">среднее</string>
+    <string name="band_good">хорошее</string>
+    <string name="band_high">высокое</string>
+
+    <!-- Summary -->
+    <string name="summary_band_format">Качество велоинфраструктуры — %1$s (Q = %2$s).</string>
+    <string name="summary_equal_criteria">Оценённые критерии примерно равнозначны.</string>
+    <string name="summary_best_worst">Сильнее всего оценку повышает критерий «%1$s» (%2$s), снижает — «%3$s» (%4$s).</string>
+    <string name="summary_no_data">Итоговую оценку рассчитать не удалось: недостаточно данных.</string>
+
+    <!-- Criterion details -->
+    <string name="detail_safety_format">Комфортная для велосипедиста сеть (велодорожки, велополосы, спокойные улицы) — %1$s протяжённости (%2$s из %3$s).</string>
+    <string name="detail_continuity_single_format">Комфортная велосеть полностью связна — один непрерывный участок (%1$s).</string>
+    <string name="detail_continuity_multi_format">Крупнейший связный участок комфортной сети — %1$s её протяжённости (%2$s из %3$s). Обособленных участков: %4$d.</string>
+    <string name="detail_intersections_format">Организованным пересечением (светофор или разметка) оборудовано %1$d из %2$d перекрёстков области.</string>
+    <string name="detail_high_speed_format">На скоростных дорогах велоинфраструктурой обеспечено %1$s протяжённости (%2$s из %3$s).</string>
+    <string name="detail_surface_format">Приемлемое покрытие у %1$d из %2$d объектов велоинфраструктуры с указанным тегом surface.</string>
+
+    <!-- Not applicable reasons -->
+    <string name="not_applicable_no_low_stress">Комфортная велосеть в области отсутствует — непрерывность не определяется.</string>
+    <string name="not_applicable_no_crossings">Перекрёстки и пешеходные переходы в области не размечены.</string>
+    <string name="not_applicable_no_fast_roads">Дорог с разрешённой скоростью свыше 40 км/ч в области нет.</string>
+    <string name="not_applicable_no_surface_data">Тег покрытия не указан ни для одного объекта велоинфраструктуры.</string>
+    <string name="not_applicable_insufficient_data">Недостаточно данных для оценки.</string>
+
+    <!-- Data warnings -->
+    <string name="warning_few_roads_format">В выбранной области мало дорог (%1$d); оценка может быть нерепрезентативной.</string>
+    <string name="warning_many_inapplicable">Для нескольких критериев недостаточно данных OSM — они исключены из расчёта Q.</string>
+    <string name="warning_no_network">Выберите область с дорожной сетью или измените масштаб карты.</string>
+    <string name="summary_no_network">В выбранной области не найдено дорог для анализа велоинфраструктуры.</string>
+
+    <!-- Errors -->
+    <string name="error_network">Не удалось подключиться к серверу OpenStreetMap. Проверьте интернет-соединение.</string>
+    <string name="error_http_format">Сервер OpenStreetMap вернул ошибку (код %1$d).</string>
+    <string name="error_empty_response">Сервер OpenStreetMap вернул пустой ответ.</string>
+    <string name="error_parse">Не удалось разобрать ответ Overpass API.</string>
+    <string name="error_unknown">Не удалось выполнить анализ области.</string>
+
+    <!-- Numeric format helpers (locale-aware) -->
+    <string name="format_km">%1$.1f км</string>
+    <string name="format_percent">%1$d%%</string>
+    <string name="format_score">%1$.2f</string>
 </resources>

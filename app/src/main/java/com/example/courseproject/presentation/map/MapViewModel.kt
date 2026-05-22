@@ -2,6 +2,8 @@ package com.example.courseproject.presentation.map
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.courseproject.domain.model.AnalysisError
+import com.example.courseproject.domain.model.AnalysisException
 import com.example.courseproject.domain.model.AreaEvaluation
 import com.example.courseproject.domain.model.BoundingBox
 import com.example.courseproject.domain.repository.HistoryRepository
@@ -18,10 +20,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-/** Состояние главного экрана с картой. */
+/**
+ * Состояние главного экрана с картой.
+ *
+ * Ошибка хранится в виде типизированного [AnalysisError]; локализованный
+ * текст по нему формирует presentation-слой через ресурсы строк.
+ */
 data class MapUiState(
     val isLoading: Boolean = false,
-    val error: String? = null,
+    val error: AnalysisError? = null,
 )
 
 /**
@@ -53,7 +60,7 @@ class MapViewModel(
                 .onSuccess { score ->
                     val evaluation = AreaEvaluation(
                         id = UUID.randomUUID().toString(),
-                        name = "Область ${history.value.size + 1}",
+                        index = history.value.size + 1,
                         boundingBox = bbox,
                         score = score,
                         timestamp = System.currentTimeMillis(),
@@ -62,11 +69,11 @@ class MapViewModel(
                     _uiState.update { it.copy(isLoading = false) }
                     _analysisReady.emit(evaluation.id)
                 }
-                .onFailure { error ->
+                .onFailure { throwable ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            error = error.message ?: "Не удалось выполнить анализ области",
+                            error = toAnalysisError(throwable),
                         )
                     }
                 }
@@ -74,4 +81,8 @@ class MapViewModel(
     }
 
     fun dismissError() = _uiState.update { it.copy(error = null) }
+
+    /** Преобразование произвольного исключения в типизированную ошибку анализа. */
+    private fun toAnalysisError(throwable: Throwable): AnalysisError =
+        if (throwable is AnalysisException) throwable.error else AnalysisError.Unknown
 }

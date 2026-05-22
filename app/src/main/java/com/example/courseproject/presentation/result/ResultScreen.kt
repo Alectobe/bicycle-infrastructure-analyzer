@@ -27,17 +27,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.courseproject.R
 import com.example.courseproject.di.AppContainer
 import com.example.courseproject.domain.model.AreaEvaluation
-import com.example.courseproject.domain.model.QualityScore
 import com.example.courseproject.presentation.components.EvaluationRow
-import com.example.courseproject.presentation.components.formatScore
 import com.example.courseproject.presentation.components.scoreColor
 import com.example.courseproject.presentation.evaluation.EvaluationUiState
 import com.example.courseproject.presentation.evaluation.EvaluationViewModel
+import com.example.courseproject.presentation.format.formatScore
+import com.example.courseproject.presentation.format.localizedBand
+import com.example.courseproject.presentation.format.localizedDataWarning
+import com.example.courseproject.presentation.format.localizedScoreSummary
 
 /** Маршрут экрана результата: связывает [EvaluationViewModel] с UI. */
 @Composable
@@ -72,10 +76,13 @@ fun ResultScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Результат анализа") },
+                title = { Text(stringResource(R.string.screen_result_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.action_back),
+                        )
                     }
                 },
             )
@@ -89,7 +96,7 @@ fun ResultScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("Запись анализа не найдена.")
+                Text(stringResource(R.string.result_not_found))
             }
             return@Scaffold
         }
@@ -102,10 +109,12 @@ fun ResultScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             ScoreHeaderCard(evaluation)
-            evaluation.score.dataWarning?.let { WarningCard(it) }
-            SummaryCard(evaluation.score.summary)
+            evaluation.score.dataWarning?.let { warning ->
+                WarningCard(text = localizedDataWarning(warning))
+            }
+            SummaryCard(summary = localizedScoreSummary(evaluation.score))
             Button(onClick = onOpenDetail, modifier = Modifier.fillMaxWidth()) {
-                Text("Подробнее по критериям")
+                Text(stringResource(R.string.action_open_details))
             }
             SimilarAreasSection(similar = state.similar, onOpenResult = onOpenResult)
         }
@@ -114,6 +123,9 @@ fun ResultScreen(
 
 @Composable
 private fun ScoreHeaderCard(evaluation: AreaEvaluation) {
+    val name = stringResource(R.string.area_name_format, evaluation.index)
+    val bandText = localizedBand(evaluation.score.summary.band)
+    val bandHeader = stringResource(R.string.result_band_header_format, bandText)
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
@@ -121,17 +133,14 @@ private fun ScoreHeaderCard(evaluation: AreaEvaluation) {
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(evaluation.name, style = MaterialTheme.typography.titleMedium)
+            Text(text = name, style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
             Text(
                 text = formatScore(evaluation.score.total),
                 style = MaterialTheme.typography.displayMedium,
                 color = scoreColor(evaluation.score.total),
             )
-            Text(
-                text = "Качество велоинфраструктуры — ${QualityScore.band(evaluation.score.total)}",
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            Text(text = bandHeader, style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(12.dp))
             LinearProgressIndicator(
                 progress = { evaluation.score.total.toFloat() },
@@ -163,9 +172,12 @@ private fun WarningCard(text: String) {
 private fun SummaryCard(summary: String) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Пояснение к оценке", style = MaterialTheme.typography.titleSmall)
+            Text(
+                text = stringResource(R.string.result_summary_header),
+                style = MaterialTheme.typography.titleSmall,
+            )
             Spacer(Modifier.height(6.dp))
-            Text(summary, style = MaterialTheme.typography.bodyMedium)
+            Text(text = summary, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
@@ -176,11 +188,14 @@ private fun SimilarAreasSection(
     onOpenResult: (String) -> Unit,
 ) {
     Column {
-        Text("Похожие районы", style = MaterialTheme.typography.titleSmall)
+        Text(
+            text = stringResource(R.string.result_similar_header),
+            style = MaterialTheme.typography.titleSmall,
+        )
         Spacer(Modifier.height(6.dp))
         if (similar.isEmpty()) {
             Text(
-                text = "Оцените другие районы, чтобы сравнить их между собой.",
+                text = stringResource(R.string.result_similar_empty),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

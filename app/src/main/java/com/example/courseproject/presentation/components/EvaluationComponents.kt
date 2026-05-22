@@ -19,9 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.courseproject.R
 import com.example.courseproject.domain.model.AreaEvaluation
-import com.example.courseproject.domain.model.QualityScore
+import com.example.courseproject.presentation.format.formatScore
+import com.example.courseproject.presentation.format.localizedBand
 
 /** Круглый бейдж с числовым значением показателя качества. */
 @Composable
@@ -48,6 +51,9 @@ fun EvaluationRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val name = stringResource(R.string.area_name_format, evaluation.index)
+    val bandText = localizedBand(evaluation.score.summary.band)
+    val qualityLabel = stringResource(R.string.quality_label_format, bandText)
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -62,12 +68,9 @@ fun EvaluationRow(
             ScoreBadge(value = evaluation.score.total)
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
+                Text(text = name, style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    text = evaluation.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Text(
-                    text = "Качество: ${QualityScore.band(evaluation.score.total)}",
+                    text = qualityLabel,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

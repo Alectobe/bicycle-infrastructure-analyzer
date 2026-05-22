@@ -1,5 +1,7 @@
 package com.example.courseproject.data.remote
 
+import com.example.courseproject.domain.model.AnalysisError
+import com.example.courseproject.domain.model.AnalysisException
 import com.example.courseproject.domain.model.BoundingBox
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,6 +14,10 @@ import java.util.concurrent.TimeUnit
 /**
  * Клиент Overpass API — веб-сервиса запросов к базе данных OpenStreetMap.
  * Возвращает «сырой» JSON-ответ; его разбор выполняется в слое репозитория.
+ *
+ * Сбои оборачиваются в [AnalysisException] с типизированной причиной
+ * [AnalysisError], без формирования пользовательских сообщений — это
+ * остаётся ответственностью presentation-слоя.
  */
 class OverpassApi(
     private val endpoint: String = DEFAULT_ENDPOINT,
@@ -38,13 +44,13 @@ class OverpassApi(
         try {
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
-                    throw OverpassException("Overpass API вернул код ${response.code}")
+                    throw AnalysisException(AnalysisError.HttpError(response.code))
                 }
                 response.body?.string()
-                    ?: throw OverpassException("Overpass API вернул пустой ответ")
+                    ?: throw AnalysisException(AnalysisError.EmptyResponse)
             }
         } catch (e: IOException) {
-            throw OverpassException("Не удалось получить данные OpenStreetMap: ${e.message}", e)
+            throw AnalysisException(AnalysisError.NetworkUnavailable, e)
         }
     }
 
